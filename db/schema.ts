@@ -6,6 +6,6 @@ export const user = pgTable("user", {
   email: text("email"),
   password: text("password"),
   role: text("role").$type<"admin" | "customer">(),
-  createAt: timestamp("create_at"),
-  updateAt: timestamp("update_at"),
+  createAt: timestamp("created_at"),
+  updateAt: timestamp("updated_at"),
 });

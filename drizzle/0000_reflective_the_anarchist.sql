@@ -4,6 +4,6 @@ CREATE TABLE IF NOT EXISTS "user" (
 	"email" text,
 	"password" text,
 	"role" text,
-	"create_at" timestamp,
-	"update_at" timestamp
+	"created_at" timestamp,
+	"updated_at" timestamp
 );
