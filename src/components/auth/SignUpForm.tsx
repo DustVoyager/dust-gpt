@@ -9,8 +9,11 @@ import { useFormValidate } from "../../../hooks/useFormValidate";
 import { SignUpSchema } from "../../../schemas/auth";
 import { TSignUpFormError } from "../../../types/form";
 import FormMessage from "./FormMessage";
+import { useFormState } from "react-dom";
+import { signUp } from "../../../actions/signup";
 
 export function SignUpForm() {
+  const [error, action] = useFormState(signUp, undefined);
   const { errors, validateField } =
     useFormValidate<TSignUpFormError>(SignUpSchema);
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -26,7 +29,7 @@ export function SignUpForm() {
         title="회원가입"
         footer={{ label: "이미 계정이 있으신가요?", href: "/login" }}
       >
-        <form className="space-y-6">
+        <form action={action} className="space-y-6">
           {/* 이름 */}
           <div className="space-y-1">
             <Label htmlFor="name">이름</Label>
