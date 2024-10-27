@@ -6,10 +6,11 @@ import { verify } from "../actions/sessions";
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  console.log(pathname, "---------");
   const isPublicRoute = PUBLIC_ROUTES.includes(pathname);
 
-  const cookie = cookies().get("session")?.value;
+  const cookieStore = await cookies(); // await 필요
+  const cookie = cookieStore.get("session")?.value;
+
   const session = await verify(cookie);
 
   if (!isPublicRoute && !session) {
