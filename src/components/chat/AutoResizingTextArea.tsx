@@ -9,8 +9,6 @@ export function AutoResizingTextArea({
 }: TextareaHTMLAttributes<HTMLTextAreaElement>) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  console.log("value", value, "ohter", others);
-
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "inherit";

@@ -11,7 +11,7 @@ export function Message({ name = "User", content = "", role }: Props) {
   const avatarName = isAssistant ? "Dust GPT" : name;
 
   return (
-    <div className="flex items-center gap-2 mb-5">
+    <div className="flex items-start gap-2 mb-5">
       {/* 아바타 */}
       <Avatar>
         <AvatarImage src={isAssistant ? "/logo.png" : ""} />
