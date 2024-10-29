@@ -57,7 +57,7 @@ export function Chat({ initialMessages }: Props) {
     <div className="flex flex-col w-[80%] h-full mx-auto">
       {/* 채팅 영역 */}
       <div className="flex-1">
-        {messages.length === 0 ? (
+        {!params.conversationId && messages.length === 0 ? (
           <Empty />
         ) : (
           <>
