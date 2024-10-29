@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useChat } from "ai/react";
+import { useChat, Message as TMessage } from "ai/react";
 import { AutoResizingTextArea } from "./AutoResizingTextArea";
 import { Empty } from "./Empty";
 import { Message } from "./Message";
@@ -12,28 +12,40 @@ import { useParams, useRouter } from "next/navigation";
 import { addMessages, createConversation } from "../../../actions/conversation";
 import { CHAT_ROUTES } from "../../../constants/routes";
 
-export function Chat() {
+type Props = {
+  initialMessages?: TMessage[];
+};
+
+export function Chat({ initialMessages }: Props) {
   const router = useRouter();
   const params = useParams<{ conversationId: string }>();
-  console.log(params);
-  const { messages, input, handleInputChange, handleSubmit } = useChat({
-    onFinish: async (message) => {
-      // param -> conversationId가 없으면 새로운 대화 페이지
-      if (!params.conversationId) {
-        // 1. create conversation
-        const conversation = await createConversation(input);
-        // 2. add message
-        await addMessages(conversation.id, input, message.content);
 
-        router.push(`${CHAT_ROUTES.CONVERSATIONS}/${conversation.id}`);
-      } else {
-        // param -> converstaionId가 있으면 기존 대화 페이지
-        // 1. add message
-      }
-    },
-  });
+  const { messages, setMessages, input, handleInputChange, handleSubmit } =
+    useChat({
+      onFinish: async (message) => {
+        // param -> conversationId가 없으면 새로운 대화 페이지
+        if (!params.conversationId) {
+          // 1. create conversation
+          const conversation = await createConversation(input);
+          // 2. add messages
+          await addMessages(conversation.id, input, message.content);
+
+          router.push(`${CHAT_ROUTES.CONVERSATIONS}/${conversation.id}`);
+        } else {
+          // param -> conversationId가 있으면 기존 대화페이지
+          // 1. add messages
+          await addMessages(params.conversationId, input, message.content);
+        }
+      },
+    });
   const model = useModelStore((state) => state.model);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (initialMessages) {
+      setMessages(initialMessages);
+    }
+  }, [initialMessages, setMessages]);
 
   useEffect(() => {
     if (scrollRef.current) {

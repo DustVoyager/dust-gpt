@@ -1,8 +1,10 @@
 "use server";
 
-import db from "../db";
-import { conversation, message } from "../db/schema";
+import db from "@/db";
+import { conversation, message } from "@/db/schema";
 import { verifySession } from "./sessions";
+import { revalidatePath } from "next/cache";
+import { BASE_URL, CHAT_ROUTES } from "@/constants/routes";
 
 export const addMessages = async (
   conversationId: string,
@@ -20,6 +22,8 @@ export const addMessages = async (
     content: assistantContent,
     role: "assistant",
   });
+
+  revalidatePath(`${CHAT_ROUTES.CONVERSATIONS}/${conversationId}`);
 };
 
 export const createConversation = async (name: string) => {
@@ -32,6 +36,8 @@ export const createConversation = async (name: string) => {
       userId: session.id,
     })
     .returning();
+
+  revalidatePath(BASE_URL);
 
   return result[0];
 };

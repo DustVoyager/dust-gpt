@@ -1,5 +1,5 @@
-import Header from "@/components/chat/Header";
-import Sidebar from "@/components/chat/Sidebar";
+import Header from "@/src/components/chat/Header";
+import Sidebar from "@/src/components/chat/Sidebar";
 
 export default function ChatLayout({
   children,

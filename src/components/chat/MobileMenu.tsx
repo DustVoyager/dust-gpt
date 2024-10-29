@@ -1,11 +1,10 @@
 "use client";
 
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import Sidebar from "./Sidebar";
+import { Sheet, SheetContent, SheetTrigger } from "@/src/components/ui/sheet";
 import { Menu } from "lucide-react";
 import { useSheetStore } from "../../../store/sheet";
 
-export function MobileMunu() {
+export function MobileMunu({ children }: { children: React.ReactNode }) {
   const open = useSheetStore((state) => state.open);
   const setOpen = useSheetStore((state) => state.setOpen);
 
@@ -16,7 +15,7 @@ export function MobileMunu() {
           <Menu />
         </SheetTrigger>
         <SheetContent side="left" className="p-0">
-          <Sidebar />
+          {children}
         </SheetContent>
       </Sheet>
     </div>
