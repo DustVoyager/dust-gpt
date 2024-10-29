@@ -35,7 +35,9 @@ export const createSession = async (payload: SessionPayload) => {
   const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
   const session = await encrypt(payload);
 
-  cookies().set("session", session, {
+  const cookieStore = await cookies();
+
+  cookieStore.set("session", session, {
     httpOnly: true,
     secure: true,
     expires: expiresAt,
@@ -45,11 +47,13 @@ export const createSession = async (payload: SessionPayload) => {
 };
 
 export const deleteSession = async () => {
-  cookies().delete("session");
+  const cookieStore = await cookies();
+  cookieStore.delete("session");
 };
 
 export const verifySession = async () => {
-  const cookie = cookies().get("session")?.value;
+  const cookieStore = await cookies();
+  const cookie = cookieStore.get("session")?.value;
   const session = await verify(cookie);
 
   if (!session?.id) {
