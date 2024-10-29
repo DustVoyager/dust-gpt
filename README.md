@@ -10,8 +10,11 @@ Open Api 연동을 이용한 Chat Gpt 클론 코딩입니다.
 
 기술 스택:
 
-- nextjs
+- Framework : nextjs (v.15)
 - typescript
+- Justand
+- tailwind
 - Zod
 - drizzle
 - postgres
+- shadcn ui
