@@ -30,7 +30,6 @@ export default function SidebarItem({ item }: Props) {
     setIsMenuOpen((prev) => !prev);
   };
 
-  console.log(pathname, "---");
   return (
     <Link
       href={href}
