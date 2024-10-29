@@ -8,9 +8,30 @@ import { Message } from "./Message";
 import { Button } from "../ui/button";
 import { ArrowUp } from "lucide-react";
 import { useModelStore } from "../../../store/model";
+import { useParams, useRouter } from "next/navigation";
+import { addMessages, createConversation } from "../../../actions/conversation";
+import { CHAT_ROUTES } from "../../../constants/routes";
 
 export function Chat() {
-  const { messages, input, handleInputChange, handleSubmit } = useChat();
+  const router = useRouter();
+  const params = useParams<{ conversationId: string }>();
+  console.log(params);
+  const { messages, input, handleInputChange, handleSubmit } = useChat({
+    onFinish: async (message) => {
+      // param -> conversationId가 없으면 새로운 대화 페이지
+      if (!params.conversationId) {
+        // 1. create conversation
+        const conversation = await createConversation(input);
+        // 2. add message
+        await addMessages(conversation.id, input, message.content);
+
+        router.push(`${CHAT_ROUTES.CONVERSATIONS}/${conversation.id}`);
+      } else {
+        // param -> converstaionId가 있으면 기존 대화 페이지
+        // 1. add message
+      }
+    },
+  });
   const model = useModelStore((state) => state.model);
   const scrollRef = useRef<HTMLDivElement>(null);
 
