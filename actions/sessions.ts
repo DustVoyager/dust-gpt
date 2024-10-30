@@ -27,7 +27,7 @@ export const verify = async (session: string | undefined = "") => {
 
     return payload;
   } catch (error) {
-    console.error("토큰 검증에 실패하였습니다.");
+    console.log("토큰 검증에 실패하였습니다.");
   }
 };
 
