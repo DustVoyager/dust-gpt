@@ -5,6 +5,7 @@ import { conversation, message } from "@/db/schema";
 import { verifySession } from "./sessions";
 import { revalidatePath } from "next/cache";
 import { BASE_URL, CHAT_ROUTES } from "@/constants/routes";
+import { eq } from "drizzle-orm";
 
 export const addMessages = async (
   conversationId: string,
@@ -40,4 +41,19 @@ export const createConversation = async (name: string) => {
   revalidatePath(BASE_URL);
 
   return result[0];
+};
+
+export const updateConversation = async (id: string, name: string) => {
+  await db
+    .update(conversation)
+    .set({ name, updateAt: new Date() })
+    .where(eq(conversation.id, id));
+
+  revalidatePath(BASE_URL);
+};
+
+export const deleteConversation = async (id: string) => {
+  await db.delete(conversation).where(eq(conversation.id, id));
+
+  revalidatePath(BASE_URL);
 };
