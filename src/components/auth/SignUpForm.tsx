@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, useEffect } from "react";
+import { ChangeEvent, useActionState, useEffect } from "react";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { FormCard } from "./FormCard";
@@ -9,12 +9,11 @@ import { useFormValidate } from "../../../hooks/useFormValidate";
 import { SignUpSchema } from "../../../schemas/auth";
 import { TSignUpFormError } from "../../../types/form";
 import FormMessage from "./FormMessage";
-import { useFormState } from "react-dom";
 import { signUp } from "../../../actions/signup";
 import toast from "react-hot-toast";
 
 export function SignUpForm() {
-  const [error, action] = useFormState(signUp, undefined);
+  const [error, action] = useActionState(signUp, undefined);
   const { errors, validateField } =
     useFormValidate<TSignUpFormError>(SignUpSchema);
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {

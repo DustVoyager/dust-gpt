@@ -3,10 +3,9 @@
 import { Label } from "@radix-ui/react-label";
 import { FormCard } from "./FormCard";
 import { Input } from "../ui/input";
-import { useFormState } from "react-dom";
 import { useFormValidate } from "../../../hooks/useFormValidate";
 import { TLoginFormError } from "../../../types/form";
-import { ChangeEvent, useEffect } from "react";
+import { ChangeEvent, useActionState, useEffect } from "react";
 import { login } from "../../../actions/login";
 import { LoginSchema } from "../../../schemas/auth";
 import toast from "react-hot-toast";
@@ -14,7 +13,7 @@ import FormMessage from "./FormMessage";
 import { Submit } from "./Submit";
 
 export default function LoginForm() {
-  const [error, action] = useFormState(login, undefined);
+  const [error, action] = useActionState(login, undefined);
   const { errors, validateField } =
     useFormValidate<TLoginFormError>(LoginSchema);
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
