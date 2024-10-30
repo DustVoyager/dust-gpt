@@ -3,11 +3,11 @@
 import Link from "next/link";
 import { ChangeEvent, ReactNode, useEffect, useRef, useState } from "react";
 import { Ellipsis, Pencil, Trash } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { cn } from "@/src/lib/utils";
 import { useSheetStore } from "../../../store/sheet";
 import toast from "react-hot-toast";
-import { updateConversation } from "@/actions/conversation";
+import { deleteConversation, updateConversation } from "@/actions/conversation";
 
 import {
   DropdownMenu,
@@ -15,6 +15,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { useModalStore } from "@/store/modal";
+import { ModalFooter } from "../modal/ModalFooter";
+import { BASE_URL } from "@/constants/routes";
 
 type Props = {
   item: {
@@ -28,9 +31,13 @@ type Props = {
 export default function SidebarItem({ item }: Props) {
   const { id, href, icon, label } = item;
   const pathname = usePathname();
+  const params = useParams<{ conversationId: string }>();
+  const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [value, setValue] = useState(label);
+  const openModal = useModalStore((state) => state.openModal);
+  const closeModal = useModalStore((state) => state.closeModal);
   const setOpen = useSheetStore((state) => state.setOpen);
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -61,6 +68,33 @@ export default function SidebarItem({ item }: Props) {
     if (event.key === "enter") {
       await handleBlur();
     }
+  };
+
+  const handleDelete = async () => {
+    try {
+      await deleteConversation(id);
+      toast.success("대화 삭제에 성공하였습니다.");
+
+      if (params.conversationId === id) {
+        router.push(BASE_URL);
+      }
+
+      closeModal();
+    } catch (error) {
+      console.log(error);
+      toast.error("대화 삭제에 실패했습니다.");
+    }
+  };
+
+  const clickDelete = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.preventDefault();
+
+    // 모달 로직
+    openModal({
+      title: "정말 삭제하겠습니까?",
+      description: "삭제 후에는 데이터 복구를 할 수 없습니다.",
+      footer: <ModalFooter onCancel={closeModal} onConfirm={handleDelete} />,
+    });
   };
 
   const clickEdit = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -123,7 +157,7 @@ export default function SidebarItem({ item }: Props) {
               <Pencil size={18} />
               Edit
             </DropdownMenuItem>
-            <DropdownMenuItem className="gap-2">
+            <DropdownMenuItem className="gap-2" onClick={clickDelete}>
               <Trash size={18} />
               Delete
             </DropdownMenuItem>
