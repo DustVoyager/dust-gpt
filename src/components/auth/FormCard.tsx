@@ -15,7 +15,7 @@ type Props = {
 
 export function FormCard({ title, footer, children }: Props) {
   return (
-    <Card className="w-[500px] flex flex-col items-center border">
+    <Card className="md:w-[500px] w-[90%] flex flex-col items-center border">
       <CardHeader>
         <CardTitle>{title}</CardTitle>
       </CardHeader>
