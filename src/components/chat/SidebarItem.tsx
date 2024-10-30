@@ -1,6 +1,13 @@
 "use client";
+
 import Link from "next/link";
-import { ReactNode, useState } from "react";
+import { ChangeEvent, ReactNode, useEffect, useRef, useState } from "react";
+import { Ellipsis, Pencil, Trash } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { cn } from "@/src/lib/utils";
+import { useSheetStore } from "../../../store/sheet";
+import toast from "react-hot-toast";
+import { updateConversation } from "@/actions/conversation";
 
 import {
   DropdownMenu,
@@ -8,10 +15,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { Ellipsis, Pencil, Trash } from "lucide-react";
-import { usePathname } from "next/navigation";
-import { cn } from "@/src/lib/utils";
-import { useSheetStore } from "../../../store/sheet";
 
 type Props = {
   item: {
@@ -26,11 +29,51 @@ export default function SidebarItem({ item }: Props) {
   const { id, href, icon, label } = item;
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [value, setValue] = useState(label);
   const setOpen = useSheetStore((state) => state.setOpen);
+
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setValue(event.target.value);
+  };
 
   const handleMenu = () => {
     setIsMenuOpen((prev) => !prev);
   };
+
+  const handleBlur = async () => {
+    setIsEditMode(false);
+    if (value !== label) {
+      try {
+        updateConversation(id, value);
+      } catch (error) {
+        console.log(error);
+        toast.error("이름 수정에 실패하였습니다.");
+      }
+    }
+  };
+
+  const handleKeyDown = async (
+    event: React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    if (event.key === "enter") {
+      await handleBlur();
+    }
+  };
+
+  const clickEdit = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setIsEditMode(true);
+    setIsMenuOpen(false);
+  };
+
+  useEffect(() => {
+    if (isEditMode && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isEditMode]);
 
   return (
     <Link
@@ -46,7 +89,20 @@ export default function SidebarItem({ item }: Props) {
     >
       {/* label 영역 */}
       <div className="flex items-center gap-2">
-        {icon} <div className="w-[180px] truncate">{label}</div>
+        {icon}{" "}
+        {isEditMode ? (
+          <input
+            value={value}
+            onChange={handleChange}
+            onClick={(event) => event.preventDefault()}
+            onBlur={handleBlur}
+            onKeyDown={handleKeyDown}
+            className="bg-transparent border border-zinc-400 rounded-lg px-2 py-1"
+            ref={inputRef}
+          />
+        ) : (
+          <div className="w-[180px] truncate">{label}</div>
+        )}
       </div>
 
       {/* 드롭다운 메뉴 영역 */}
@@ -63,7 +119,7 @@ export default function SidebarItem({ item }: Props) {
             </div>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem className="gap-2">
+            <DropdownMenuItem className="gap-2" onClick={clickEdit}>
               <Pencil size={18} />
               Edit
             </DropdownMenuItem>
