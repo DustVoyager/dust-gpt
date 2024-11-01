@@ -17,6 +17,7 @@ export function Modal() {
   const config = useModalStore((state) => state.config);
 
   const { title, description, content, footer } = config || {};
+  console.log("footer", footer);
 
   return (
     <Dialog open={open} onOpenChange={closeModal}>
@@ -26,7 +27,7 @@ export function Modal() {
           {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
         {content}
-        <DialogFooter>{footer}</DialogFooter>
+        <DialogFooter className="gap-2">{footer}</DialogFooter>
       </DialogContent>
     </Dialog>
   );
