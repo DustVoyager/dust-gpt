@@ -11,21 +11,31 @@ import { TSignUpFormError } from "../../../types/form";
 import FormMessage from "./FormMessage";
 import { signUp } from "../../../actions/signup";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 export function SignUpForm() {
-  const [error, action] = useActionState(signUp, undefined);
+  const [state, action] = useActionState(signUp, undefined);
   const { errors, validateField } =
     useFormValidate<TSignUpFormError>(SignUpSchema);
+  const router = useRouter();
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     validateField(name, value);
   };
 
   useEffect(() => {
-    if (error?.errorMessage) {
-      toast.error(error.errorMessage);
+    if (state?.successMessage) {
+      toast.success(state.successMessage);
+
+      setTimeout(() => {
+        router.push("/login");
+      }, 1500);
     }
-  }, [error]);
+
+    if (state?.errorMessage) {
+      toast.error(state?.errorMessage);
+    }
+  }, [state, router]);
 
   return (
     <>

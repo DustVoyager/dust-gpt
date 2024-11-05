@@ -17,7 +17,6 @@ export function Modal() {
   const config = useModalStore((state) => state.config);
 
   const { title, description, content, footer } = config || {};
-  console.log("footer", footer);
 
   return (
     <Dialog open={open} onOpenChange={closeModal}>

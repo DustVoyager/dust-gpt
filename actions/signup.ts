@@ -5,7 +5,6 @@ import { getUserByEmail } from "../data/user";
 import { SignUpSchema } from "../schemas/auth";
 import db from "../db";
 import { user } from "../db/schema";
-import { redirect } from "next/navigation";
 
 export const signUp = async (_: any, formData: FormData) => {
   // 1. validate Fields
@@ -37,9 +36,11 @@ export const signUp = async (_: any, formData: FormData) => {
 
     // 3. insert db
     await db.insert(user).values({ name, email, password: hashedPassword });
+    return {
+      successMessage: "회원가입에 성공하였습니다. 로그인 페이지로 이동합니다.",
+    };
   } catch (error) {
     console.log("error", error);
     return { errorMessage: "문제가 발생했습니다." };
   }
-  redirect("/login");
 };
